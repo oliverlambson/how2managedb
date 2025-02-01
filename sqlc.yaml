@@ -1,0 +1,27 @@
+version: "2"
+plugins:
+  - name: py
+    wasm:
+      url: https://downloads.sqlc.dev/plugin/sqlc-gen-python_1.3.0.wasm
+      sha256: fbedae96b5ecae2380a70fb5b925fd4bff58a6cfb1f3140375d098fbab7b3a3c
+sql:
+  - schema: "db/migrations"
+    queries: "db/query"
+    engine: postgresql
+    codegen:
+      - out: src/db
+        plugin: py
+        options:
+          package: db
+          emit_async_querier: true
+          query_parameter_limit: 5
+          emit_pydantic_models: true
+rules:
+  - name: no-pg
+    message: "invalid engine: postgresql"
+    rule: |
+      config.engine == "postgresql"
+  - name: no-delete
+    message: "don't use delete statements"
+    rule: |
+      query.sql.contains("DELETE")

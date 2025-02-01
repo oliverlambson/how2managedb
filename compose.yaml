@@ -1,0 +1,22 @@
+name: db-mgt-test
+
+services:
+  postgres:
+    image: postgres:16.6-alpine
+    ports:
+      - 5436:5432
+    environment:
+      POSTGRES_DATABASE: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # for healthcheck (libpq)
+      PGDATABASE: postgres
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    healthcheck:
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+      start_interval: 0.5s
+      test: ["CMD-SHELL", "pg_isready"]
